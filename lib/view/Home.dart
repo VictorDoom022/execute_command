@@ -62,19 +62,19 @@ class _HomeState extends State<Home> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Home',
+            'Device Information',
             style: TextStyle(
                 fontSize: 20
             ),
           ),
           const SizedBox(height: 20),
           Mica(
-            child: Expander(
-              initiallyExpanded: true,
-              header: const Text('Device Specification'),
-              content: Platform.isWindows ? renderWindowsInfo() : Platform.isMacOS ? renderMacInfo() : Platform.isAndroid ? renderAndroidInfo() : Platform.isLinux ? renderLinuxInfo() : Platform.isIOS ? renderIosInfo() : Container(),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Platform.isWindows ? renderWindowsInfo() : Platform.isMacOS ? renderMacInfo() : Platform.isAndroid ? renderAndroidInfo() : Platform.isLinux ? renderLinuxInfo() : Platform.isIOS ? renderIosInfo() : Container(),
             ),
-          )
+          ),
         ],
       ),
     );
