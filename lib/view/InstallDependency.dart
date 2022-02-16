@@ -8,6 +8,8 @@ import 'package:process_run/shell.dart';
 import 'package:process_run/which.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../controller/InstallDependencyController.dart';
+
 class InstallDependency extends StatefulWidget {
   const InstallDependency({Key? key}) : super(key: key);
 
@@ -65,21 +67,21 @@ class _InstallDependencyState extends State<InstallDependency> {
                       title: 'Dart',
                       path: dartInstalledMsg,
                       isInstalled: resultReturn(dartInstalledMsg),
-                      onPressed: ()=> installFlutter(),
+                      onPressed: ()=> InstallDependencyController.installFlutter(context),
                     ),
                     const SizedBox(height: 10),
                     ExpandedItem(
                       title: 'Flutter',
                       path: flutterInstalledMsg,
                       isInstalled: resultReturn(flutterInstalledMsg),
-                      onPressed: ()=> installFlutter(),
+                      onPressed: ()=> InstallDependencyController.installFlutter(context),
                     ),
                     const SizedBox(height: 10),
                     ExpandedItem(
                       title: 'Java',
                       path: javaInstalledMsg,
                       isInstalled: resultReturn(javaInstalledMsg),
-                      onPressed: ()=> installJava(),
+                      onPressed: ()=> InstallDependencyController.installJava(context),
                     ),
                   ],
                 ),
@@ -97,35 +99,35 @@ class _InstallDependencyState extends State<InstallDependency> {
                       title: 'PHP',
                       path: phpInstalledMsg,
                       isInstalled: resultReturn(phpInstalledMsg),
-                      onPressed: ()=> installPHP(),
+                      onPressed: ()=> InstallDependencyController.installPHP(),
                     ),
                     const SizedBox(height: 10),
                     ExpandedItem(
                       title: 'Composer',
                       path: composerInstalledMsg,
                       isInstalled: resultReturn(composerInstalledMsg),
-                      onPressed: ()=> installComposer(),
+                      onPressed: ()=> InstallDependencyController.installComposer(context),
                     ),
                     const SizedBox(height: 10),
                     ExpandedItem(
                       title: 'Node JS',
                       path: nodeInstalledMsg,
                       isInstalled: resultReturn(nodeInstalledMsg),
-                      onPressed: ()=> installNode(),
+                      onPressed: ()=> InstallDependencyController.installNode(context),
                     ),
                     const SizedBox(height: 10),
                     ExpandedItem(
                       title: 'NPM Package Manager',
                       path: npmInstalledMsg,
                       isInstalled: resultReturn(npmInstalledMsg),
-                      onPressed: ()=> installNPM(),
+                      onPressed: ()=> InstallDependencyController.installNPM(context),
                     ),
                     const SizedBox(height: 10),
                     ExpandedItem(
                       title: 'Vue JS',
                       path: vueInstalledMsg,
                       isInstalled: resultReturn(vueInstalledMsg),
-                      onPressed: ()=> installVueJS(),
+                      onPressed: ()=> InstallDependencyController.installVueJS(context),
                     ),
                   ],
                 ),
@@ -141,12 +143,12 @@ class _InstallDependencyState extends State<InstallDependency> {
                   children: [
                     ExpandedItem(
                       title: 'Custom ROM dependencies',
-                      onPressed: ()=> installCustomRomDependencies(),
+                      onPressed: ()=> InstallDependencyController.installCustomRomDependencies(context),
                     ),
                     const SizedBox(height: 10),
                     ExpandedItem(
                       title: 'GAPPS dependencies',
-                      onPressed: ()=> installGappsDependencies(),
+                      onPressed: ()=> InstallDependencyController.installGappsDependencies(context),
                     ),
                   ],
                 ),
@@ -164,28 +166,28 @@ class _InstallDependencyState extends State<InstallDependency> {
                       title: 'Python',
                       path: pythonInstalledMsg,
                       isInstalled: resultReturn(pythonInstalledMsg),
-                      onPressed: ()=> installPython(),
+                      onPressed: ()=> InstallDependencyController.installPython(context),
                     ),
                     const SizedBox(height: 10),
                     ExpandedItem(
                       title: 'YARN Package Manager',
                       path: yarnInstalledMsg,
                       isInstalled: resultReturn(yarnInstalledMsg),
-                      onPressed: ()=> installYarn(),
+                      onPressed: ()=> InstallDependencyController.installYarn(context, npmInstalledMsg),
                     ),
                     const SizedBox(height: 10),
                     ExpandedItem(
                       title: 'Visual Studio Code',
                       path: vscodeInstalledMsg,
                       isInstalled: resultReturn(vscodeInstalledMsg),
-                      onPressed: ()=> installVSCode(),
+                      onPressed: ()=> InstallDependencyController.installVSCode(),
                     ),
                     const SizedBox(height: 10),
                     ExpandedItem(
                       title: 'GIT',
                       path: gitInstalledMsg,
                       isInstalled: resultReturn(gitInstalledMsg),
-                      onPressed: ()=> installGit(),
+                      onPressed: ()=> InstallDependencyController.installGit(context),
                     ),
                   ],
                 ),
@@ -225,238 +227,6 @@ class _InstallDependencyState extends State<InstallDependency> {
       gitInstalledMsg = gitExecutable.toString();
       vscodeInstalledMsg = vscodeExecutable.toString();
     });
-  }
-
-  void installFlutter() async {
-    String windowsScript = '''
-      echo "Downloading Flutter SDK for Windows... (This may take a while)"
-      curl https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_2.10.1-stable.zip --output flutter.zip
-      echo "Unzipping Flutter SDK... (This may take a while)"
-      tar -xf flutter.zip
-      echo "Now you have to add the Flutter SDK to the PATH variable:"
-      move flutter C:/src/test
-      echo "Please setup your env"
-    ''';
-
-    String linuxScript = 'sudo snap install flutter --classic';
-
-    String macScript = ''' 
-      curl https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_2.10.1-stable.zip --output flutter.zip
-      unzip flutter.zip
-      mkdir ~/development
-      cp -R /flutter ~/development
-      echo "Please setup your env"
-     ''';
-
-    installDialog(Platform.isWindows ? windowsScript : Platform.isLinux ?  linuxScript : Platform.isMacOS ? macScript : '');
-  }
-
-  void installJava(){
-    if(Platform.isWindows || Platform.isMacOS){
-      launch('https://www.oracle.com/java/technologies/downloads/');
-    }else if(Platform.isLinux){
-      installDialog('sudo apt install default-jdk');
-    }
-  }
-
-  void installPython(){
-    if(Platform.isWindows || Platform.isMacOS){
-      launch('https://www.python.org/downloads/');
-    }else if(Platform.isLinux){
-      installDialog('sudo apt install python');
-    }
-  }
-
-  void installPHP() {
-    launch('https://www.apachefriends.org/download.html');
-  }
-
-  void installComposer() {
-    if(Platform.isWindows){
-      launch('https://nodejs.org/en/download/');
-    }else if(Platform.isLinux){
-      installDialog('sudo apt install composer');
-    }else if(Platform.isMacOS){
-      installDialog('brew install composer');
-    }
-  }
-
-  void installNode() {
-    if(Platform.isWindows || Platform.isMacOS){
-      launch('https://nodejs.org/en/download/');
-    }else if(Platform.isLinux){
-      installDialog('sudo apt install nodejs');
-    }
-  }
-
-  void installYarn() {
-    if(npmInstalledMsg != 'null'){
-      installDialog('npm install --global yarn');
-    }else{
-      resultDialog('You have to install npm first');
-    }
-  }
-
-  void installNPM() {
-    if(Platform.isWindows || Platform.isMacOS){
-      launch('https://nodejs.org/en/download/');
-    }else if(Platform.isLinux){
-      installDialog('sudo apt install npm');
-    }
-  }
-
-  void installVueJS() {
-    SetupFrameworkController.setupVue(context);
-  }
-
-  void installGit() {
-    if(Platform.isWindows){
-      launch('https://nodejs.org/en/download/');
-    }else if(Platform.isLinux){
-      installDialog('sudo apt install git');
-    }else if(Platform.isMacOS){
-      installDialog('brew install git');
-    }
-  }
-
-  void installVSCode() {
-    launch('https://code.visualstudio.com/');
-  }
-
-  void installCustomRomDependencies() {
-    String installScript = ''' 
-      sudo apt install git-core gperf bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libsdl1.2-dev libssl-dev libwxgtk3.0-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc libc6-dev-i386 x11proto-core-dev libx11-dev libgl1-mesa-dev  zip unzip zlib1g-dev -y
-      sudo add-apt-repository universe
-      sudo apt-get install libncurses5 libncurses5:i386
-    ''';
-
-    showDialog(
-        context: context,
-        builder: (_){
-          return ContentDialog(
-            title: const Text('Select Option'),
-            actions: [
-              Button(
-                child: const Text('Run Script'),
-                onPressed: (){
-                  installDialog(installScript);
-                },
-              ),
-              Button(
-                  child: const Text('Copy Script'),
-                  onPressed: (){
-                    Clipboard.setData(ClipboardData(text: installScript)).then((value) {
-                      showSnackbar(
-                        context,
-                        const Snackbar(
-                          content: Text('Copied!'),
-                        ),
-                      );
-                    });
-                  }
-              ),
-              Button(
-                child: const Text('Close'),
-                onPressed: ()=> Navigator.of(context).pop(),
-              )
-            ],
-          );
-        }
-    );
-  }
-
-  void installGappsDependencies() {
-    String installScript = ''' 
-      sudo apt install git-lfs aapt apksigner zipalign default-jdk lzip zip
-     ''';
-
-    showDialog(
-        context: context,
-        builder: (_){
-          return ContentDialog(
-            title: const Text('Select Option'),
-            actions: [
-              Button(
-                child: const Text('Run Script'),
-                onPressed: (){
-                  installDialog(installScript);
-                },
-              ),
-              Button(
-                  child: const Text('Copy Script'),
-                  onPressed: (){
-                    Clipboard.setData(ClipboardData(text: installScript)).then((value) {
-                      showSnackbar(
-                        context,
-                        const Snackbar(
-                          content: Text('Copied!'),
-                        ),
-                      );
-                    });
-                  }
-              ),
-              Button(
-                child: const Text('Close'),
-                onPressed: ()=> Navigator.of(context).pop(),
-              )
-            ],
-          );
-        }
-    );
-  }
-
-  void installDialog(String command) async {
-    String outputString = '';
-    try{
-      var shellResult = await shell.run(
-          command,
-          onProcess: (value) async {
-            showDialog(
-                context: context,
-                builder: (_){
-                  return const ContentDialog(
-                    backgroundDismiss: false,
-                    title: Text('Installing...'),
-                    content: Align(
-                        alignment: Alignment.center,
-                        child: ProgressBar()
-                    ),
-                  );
-                }
-            );
-          }
-      );
-      Navigator.of(context).pop();
-      outputString += shellResult.outText;
-
-      resultDialog(outputString);
-    }on ShellException catch (_){
-      Navigator.of(context).pop();
-      resultDialog(_.message);
-    }
-  }
-
-  Future resultDialog(String outputString) async {
-    showDialog(
-        context: context,
-        builder: (_){
-          return ContentDialog(
-            title: const Text('Result'),
-            content: Align(
-                alignment: Alignment.center,
-                child: Text(outputString)
-            ),
-            actions: [
-              Button(
-                child: const Text('OK'),
-                onPressed: (){
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
-        }
-    );
   }
 
   bool resultReturn(String result){

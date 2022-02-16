@@ -7,13 +7,13 @@ class Components{
         context: context,
         builder: (_){
           return ContentDialog(
-            title: const Text(
-              'Result',
-              maxLines: 5,
-            ),
+            title: const Text('Result'),
             content: Align(
                 alignment: Alignment.center,
-                child: Text(outputString)
+                child: Text(
+                    outputString,
+                  maxLines: 5,
+                )
             ),
             actions: [
               Button(
