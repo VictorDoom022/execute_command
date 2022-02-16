@@ -130,6 +130,27 @@ class _InstallDependencyState extends State<InstallDependency> {
                 ),
               ),
             ),
+            Platform.isLinux ? const SizedBox(height: 10) : Container(),
+            Platform.isLinux ? Mica(
+              child: Expander(
+                initiallyExpanded: true,
+                contentBackgroundColor: Colors.grey[30],
+                header: const Text('AOSP Development'),
+                content: Column(
+                  children: [
+                    ExpandedItem(
+                      title: 'Custom ROM dependencies',
+                      onPressed: ()=> installCustomRomDependencies(),
+                    ),
+                    const SizedBox(height: 10),
+                    ExpandedItem(
+                      title: 'GAPPS dependencies',
+                      onPressed: ()=> installGappsDependencies(),
+                    ),
+                  ],
+                ),
+              ),
+            ) : Container(),
             const SizedBox(height: 10),
             Mica(
               child: Expander(
@@ -301,6 +322,24 @@ class _InstallDependencyState extends State<InstallDependency> {
     launch('https://code.visualstudio.com/');
   }
 
+  void installCustomRomDependencies() {
+    String installScript = ''' 
+      sudo apt install git-core gperf bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libsdl1.2-dev libssl-dev libwxgtk3.0-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc libc6-dev-i386 x11proto-core-dev libx11-dev libgl1-mesa-dev  zip unzip zlib1g-dev -y
+      sudo add-apt-repository universe
+      sudo apt-get install libncurses5 libncurses5:i386
+     ''';
+
+    installDialog(installScript);
+  }
+
+  void installGappsDependencies() {
+    String installScript = ''' 
+      sudo apt install git-lfs aapt apksigner zipalign default-jdk lzip zip
+     ''';
+
+    installDialog(installScript);
+  }
+
   void installDialog(String command) async {
     String outputString = '';
     try{
@@ -371,12 +410,12 @@ class ExpandedItem extends StatelessWidget {
   final bool isInstalled;
   final VoidCallback onPressed;
 
-  const ExpandedItem({Key? key,required this.title, required this.path, required this.isInstalled, required this.onPressed }) : super(key: key);
+  const ExpandedItem({Key? key,required this.title, this.path = '', this.isInstalled = false, required this.onPressed }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Expander(
-      headerBackgroundColor: ButtonState.all(isInstalled ? Colors.blue.lighter : Colors.red),
+      headerBackgroundColor: ButtonState.all(!isInstalled && path == '' ? Colors.yellow.darkest : isInstalled ? Colors.blue.lighter : Colors.red),
       header: Text(
         title,
         style: const TextStyle(
@@ -384,11 +423,11 @@ class ExpandedItem extends StatelessWidget {
         ),
       ),
       content: InfoBar(
-        severity: isInstalled ? InfoBarSeverity.success : InfoBarSeverity.error,
+        severity: !isInstalled && path == '' ? InfoBarSeverity.warning : isInstalled ? InfoBarSeverity.success : InfoBarSeverity.error,
         title: Row(
           children: [
             Text(
-                isInstalled ? path : 'Not installed'
+                !isInstalled && path == '' ? 'Unknown' : isInstalled ? path : 'Not installed'
             ),
             const SizedBox(width: 20),
             isInstalled ? Container()
