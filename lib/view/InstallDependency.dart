@@ -28,7 +28,6 @@ class _InstallDependencyState extends State<InstallDependency> {
   String npmInstalledMsg = '';
   String vueInstalledMsg = '';
   String yarnInstalledMsg = '';
-  String wgetInstalledMsg = '';
   String gitInstalledMsg = '';
   String vscodeInstalledMsg = '';
 
@@ -136,31 +135,6 @@ class _InstallDependencyState extends State<InstallDependency> {
               child: Expander(
                 initiallyExpanded: true,
                 contentBackgroundColor: Colors.grey[30],
-                header: const Text('Dependencies for "Install Dependency" function'),
-                content: Column(
-                  children: [
-                    ExpandedItem(
-                      title: 'WGET',
-                      path: wgetInstalledMsg,
-                      isInstalled: resultReturn(wgetInstalledMsg),
-                      onPressed: ()=> installWget(),
-                    ),
-                    const SizedBox(height: 10),
-                    ExpandedItem(
-                      title: 'GIT',
-                      path: gitInstalledMsg,
-                      isInstalled: resultReturn(gitInstalledMsg),
-                      onPressed: ()=> installGit(),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Mica(
-              child: Expander(
-                initiallyExpanded: true,
-                contentBackgroundColor: Colors.grey[30],
                 header: const Text('Others'),
                 content: Column(
                   children: [
@@ -184,6 +158,13 @@ class _InstallDependencyState extends State<InstallDependency> {
                       isInstalled: resultReturn(vscodeInstalledMsg),
                       onPressed: ()=> installVSCode(),
                     ),
+                    const SizedBox(height: 10),
+                    ExpandedItem(
+                      title: 'GIT',
+                      path: gitInstalledMsg,
+                      isInstalled: resultReturn(gitInstalledMsg),
+                      onPressed: ()=> installGit(),
+                    ),
                   ],
                 ),
               ),
@@ -205,7 +186,6 @@ class _InstallDependencyState extends State<InstallDependency> {
     var npmExecutable = whichSync('npm');
     var vueExecutable = whichSync('vue');
     var yarnExecutable = whichSync('yarn');
-    var wgetExecutable = whichSync('wget');
     var gitExecutable = whichSync('git');
     var vscodeExecutable = whichSync('code');
 
@@ -220,7 +200,6 @@ class _InstallDependencyState extends State<InstallDependency> {
       npmInstalledMsg = npmExecutable.toString();
       vueInstalledMsg = vueExecutable.toString();
       yarnInstalledMsg = yarnExecutable.toString();
-      wgetInstalledMsg = wgetExecutable.toString();
       gitInstalledMsg = gitExecutable.toString();
       vscodeInstalledMsg = vscodeExecutable.toString();
     });
@@ -229,45 +208,25 @@ class _InstallDependencyState extends State<InstallDependency> {
   void installFlutter() async {
     String windowsScript = '''
       echo "Downloading Flutter SDK for Windows... (This may take a while)"
-      wget https://storage.googleapis.com/flutter_infra/releases/stable/windows/flutter_windows_2.10.1-stable.zip
+      curl https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_2.10.1-stable.zip --output flutter.zip
       echo "Unzipping Flutter SDK... (This may take a while)"
-      tar -xf flutter_windows_1.17.5-stable.zip
+      tar -xf flutter.zip
       echo "Now you have to add the Flutter SDK to the PATH variable:"
-      echo "1. Press Windows key"
-      echo "2. Search for \"env\", then click on the first result"
-      echo "3. Click on \"Environment Variables\""
-      echo "4. Click on the \"Path\" variable in user variables"
-      echo "5. Click \"Edit\" button"
-      echo "6. Click on \"New\" button"
-      echo "7. Paste this: `pwd`/flutter/bin"
+      move flutter C:/src/test
+      echo "Please setup your env"
     ''';
 
-    String linuxScript = '''
-      'echo "Downloading Flutter SDK for Linux... (This may take a while)"
-      emptySpace
-      wget https://storage.googleapis.com/flutter_infra/releases/stable/linux/flutter_linux_1.17.5-stable.tar.xz
-      emptySpace
-      echo "Unzipping Flutter SDK... (This may take a while)"
-      emptySpace
-      tar xf ./flutter_linux_1.17.5-stable.tar.xz
-      emptySpace
-      echo "Now you have to add the Flutter SDK to the PATH variable:"
-      echo "1. Open a new terminal"
-      echo "2. Type: \"sudo nano /etc/profile\" or \"sudo nano ~/.bashrc\""
-      echo "      note: OTHER THAN THAT YOU MUST KNOW IT :)"
-      echo "3. Add this line to the end:"
-      echo "      export PATH=\"\$PATH:`pwd`/flutter/bin\""
-      echo "4. Exit with saving changes by:"
-      echo "      - Press \"CTRL + X\""
-      echo "      - Press \"Y\""
-      echo "      - Press \"[ENTER]\""
-    ''';
+    String linuxScript = 'sudo snap install flutter --classic';
 
-    if(wgetInstalledMsg != 'null'){
-      installDialog(Platform.isWindows ? windowsScript : Platform.isLinux ?  linuxScript : '');
-    }else {
-      resultDialog('Wget dependency not installed');
-    }
+    String macScript = ''' 
+      curl https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_2.10.1-stable.zip --output flutter.zip
+      unzip flutter.zip
+      mkdir ~/development
+      cp -R /flutter ~/development
+      echo "Please setup your env"
+     ''';
+
+    installDialog(Platform.isWindows ? windowsScript : Platform.isLinux ?  linuxScript : Platform.isMacOS ? macScript : '');
   }
 
   void installJava(){
@@ -326,14 +285,6 @@ class _InstallDependencyState extends State<InstallDependency> {
 
   void installVueJS() {
     SetupFrameworkController.setupVue(context);
-  }
-
-  void installWget() async {
-    if(Platform.isWindows){
-      launch('https://eternallybored.org/misc/wget/');
-    }else if(Platform.isLinux){
-      installDialog('sudo apt install wget');
-    }
   }
 
   void installGit() {
