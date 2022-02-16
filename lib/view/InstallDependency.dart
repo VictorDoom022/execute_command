@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:execute_command/controller/SetupFrameworkController.dart';
 import 'package:execute_command/view/SetupFramework.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/services.dart';
 import 'package:process_run/shell.dart';
 import 'package:process_run/which.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -327,9 +328,41 @@ class _InstallDependencyState extends State<InstallDependency> {
       sudo apt install git-core gperf bc bison build-essential ccache curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libsdl1.2-dev libssl-dev libwxgtk3.0-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc libc6-dev-i386 x11proto-core-dev libx11-dev libgl1-mesa-dev  zip unzip zlib1g-dev -y
       sudo add-apt-repository universe
       sudo apt-get install libncurses5 libncurses5:i386
-     ''';
+    ''';
 
-    installDialog(installScript);
+    showDialog(
+        context: context,
+        builder: (_){
+          return ContentDialog(
+            title: const Text('Select Option'),
+            actions: [
+              Button(
+                child: const Text('Run Script'),
+                onPressed: (){
+                  installDialog(installScript);
+                },
+              ),
+              Button(
+                  child: const Text('Copy Script'),
+                  onPressed: (){
+                    Clipboard.setData(ClipboardData(text: installScript)).then((value) {
+                      showSnackbar(
+                        context,
+                        const Snackbar(
+                          content: Text('Copied!'),
+                        ),
+                      );
+                    });
+                  }
+              ),
+              Button(
+                child: const Text('Close'),
+                onPressed: ()=> Navigator.of(context).pop(),
+              )
+            ],
+          );
+        }
+    );
   }
 
   void installGappsDependencies() {
@@ -337,7 +370,39 @@ class _InstallDependencyState extends State<InstallDependency> {
       sudo apt install git-lfs aapt apksigner zipalign default-jdk lzip zip
      ''';
 
-    installDialog(installScript);
+    showDialog(
+        context: context,
+        builder: (_){
+          return ContentDialog(
+            title: const Text('Select Option'),
+            actions: [
+              Button(
+                child: const Text('Run Script'),
+                onPressed: (){
+                  installDialog(installScript);
+                },
+              ),
+              Button(
+                  child: const Text('Copy Script'),
+                  onPressed: (){
+                    Clipboard.setData(ClipboardData(text: installScript)).then((value) {
+                      showSnackbar(
+                        context,
+                        const Snackbar(
+                          content: Text('Copied!'),
+                        ),
+                      );
+                    });
+                  }
+              ),
+              Button(
+                child: const Text('Close'),
+                onPressed: ()=> Navigator.of(context).pop(),
+              )
+            ],
+          );
+        }
+    );
   }
 
   void installDialog(String command) async {
