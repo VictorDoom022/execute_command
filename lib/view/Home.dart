@@ -225,11 +225,11 @@ class _HomeState extends State<Home> {
       tableItem('Operating System', Platform.operatingSystem),
       tableItem('OS Version', Platform.operatingSystemVersion),
       tableItem('Platform Version', Platform.version),
-      tableItem('Machine ID', linuxDeviceInfoData.machineId!),
-      tableItem('Build ID', linuxDeviceInfoData.buildId!),
-      tableItem('Variant', linuxDeviceInfoData.variant!),
-      tableItem('Variant ID', linuxDeviceInfoData.variantId!),
-      tableItem('Version Code Name', linuxDeviceInfoData.versionCodename!),
+      tableItem('Machine ID', linuxDeviceInfoData.machineId.toString()),
+      tableItem('Build ID', linuxDeviceInfoData.buildId.toString()),
+      tableItem('Variant', linuxDeviceInfoData.variant.toString()),
+      tableItem('Variant ID', linuxDeviceInfoData.variantId.toString()),
+      tableItem('Version Code Name', linuxDeviceInfoData.versionCodename.toString()),
     ];
   }
 
